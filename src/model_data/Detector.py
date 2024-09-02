@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
-import time
+from cvzone.PoseModule import PoseDetector
 
 np.random.seed(20)
+poseDetector = PoseDetector()
 class Detector:
     def __init__(self, videoPath, configPath, modelPath, classesPath):
         self.videoPath = videoPath
@@ -36,6 +37,8 @@ class Detector:
 
         while success:
             classLabelsIds, confidences, bboxs = self.net.detect(frame, confThreshold=0.5)
+
+            retult = poseDetector.findPose(frame)
 
             bboxs = list(bboxs)
             confidences = list(np.array(confidences).reshape(1,-1)[0])
@@ -72,6 +75,7 @@ class Detector:
                     cv2.line(frame, (x + w, y + h), (x + w - lineWidth, y + h), classColor, thickness=5)
                     cv2.line(frame, (x + w, y + h), (x + w, y + h - lineWidth), classColor, thickness=5)
 
+            frame = cv2.resize(frame, (1280, 720))
             cv2.imshow("Result", frame)
 
             key = cv2.waitKey(1) & 0xFF
